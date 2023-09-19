@@ -1,9 +1,11 @@
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Clicks implements MouseListener {
+public class Clicks implements MouseListener, KeyListener {
     final Listener l;
-
+    Point p1; Point p2;
     public Clicks(Listener l){
         this.l = l;
     }
@@ -33,12 +35,25 @@ public class Clicks implements MouseListener {
     
     }
 
-    public void addListener(Listener l){
+    @Override
+    public void keyTyped(KeyEvent e) {
+        
+    }
 
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println("key pressed");
+        l.onKeyPress(e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        
     }
 
 }
 
 interface Listener {
     public void onClick(MouseEvent e);
+    public void onKeyPress(KeyEvent e);
 }

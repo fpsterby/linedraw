@@ -35,11 +35,12 @@ public class Canvas extends JPanel implements Runnable, Listener {
         
         g2.setColor(Color.GREEN);
 
-
+        int count = 0;
         for (Line line : lines) {
-            drawLine(line, g2);
+            g2.setColor(getRainbowColor(count, 0.3f));
+            g2.drawLine((int) line.p1.x, (int) line.p1.y, (int) line.p2.x, (int) line.p2.y);
+            count ++;
         }
-
     }
 
     @Override
@@ -67,19 +68,11 @@ public class Canvas extends JPanel implements Runnable, Listener {
     public void onClick(MouseEvent e) {
         if (e.getButton() == 1 && p1 != null){
             lines.add(new Line(this.p1, new Point(e.getX(), e.getY())));
-            System.out.println(lines.get(lines.size()- 1));
+            Line line = lines.get(lines.size()- 1);
+            System.out.println(line + "\t" + line.calcAngle());
         } else if (e.getButton() == 3) {
             this.p1 = new Point(e.getX(), e.getY());
         }
-    }
-
-    public void drawLine(Line line, Graphics2D g2){
-        double angle = Math.atan((line.p1.y - line.p2.y) / (line.p1.x - line.p2.x));
-        angle = Math.PI - angle;
-        angle = angle * (180 / Math.PI);
-        
-        System.out.println(angle);
-        g2.drawLine((int) line.p1.x, (int) line.p1.y, (int) line.p2.x, (int) line.p2.y);
     }
 
     @Override
@@ -89,9 +82,16 @@ public class Canvas extends JPanel implements Runnable, Listener {
                 if (lines.size() > 0)
                     lines.remove(lines.size() -1);
                     break;
+            case KeyEvent.VK_P:
+                if (lines.size() > 0)
+                    System.out.println(lines.get(lines.size() -1));
             default:
                 System.out.println("fart");
         }
+    }
+
+    private Color getRainbowColor(int index, float multiplier){
+        return new Color(Color.HSBtoRGB(0.1f * index * multiplier, .7f, 1));
     }
 }
 
@@ -106,7 +106,27 @@ class Line {
 
     @Override
     public String toString() {
-        return "line: " + p1.toString() + "\t" + p2.toString();
+        return "line: p1(" + p1.toString() + ")\tp2(" + p2.toString()+")";
+    }
+
+    public double calcAngle() {
+        double angle = 0;
+        angle = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
+
+        angle = Math.PI - angle;
+        angle = angle * (180 / Math.PI);
+
+        if (p2.x - p1.x < 0){
+            if (p2.y - p1.y > 0) {
+                // bottom left
+                angle = angle - 180;
+            } else {
+                angle = 180 + angle;    // then 180 - angle
+            }
+        }
+        
+        System.out.println(angle);
+        return angle;
     }
 }
 
